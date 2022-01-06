@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style id="style">
+        :root {
+            --width: "";
+            --font: "";
+            --background: "";
+            --header_border: "";
+            --header_color: "";
+            --link_color: "";
+            --link_border: "";
+            --link_img_border: "";
+            --link_name_color: "";
+            --link_description_color: "";
+        }
+
+
+        body {
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+            background: var(--background);
+            font-family: var(--font);
+        }
+
+        main {
+            display: grid;
+            z-index: 1;
+            margin: auto;
+            padding: 20px;
+            max-width: var(--width);
+            position: relative;
+            row-gap: 20px;
+        }
+
+        header {
+            text-align: center;
+            font-size: 30px;
+        }
+
+        header img {
+            display: inline-block;
+            object-fit: cover;
+            width: 100px;
+            height: 100px;
+            border-radius: var(--header_border);
+        }
+
+        header span {
+            display: inline-block;
+            width: 100%;
+            color: var(--header_color);
+        }
+
+        section {
+            display: grid;
+            row-gap: 20px;
+        }
+
+        .box_link {
+            display: flex;
+            column-gap: 10px;
+            border-radius: var(--link_border);
+            background-color: var(--link_color);
+            height: 30px;
+            padding: 10px;
+        }
+
+        .box_link img {
+            object-fit: cover;
+            width: 30px;
+            height: 30px;
+            border-radius: var(--link_img_border);
+        }
+
+        .box_link div a,
+        span {
+            text-decoration: none;
+            width: 100%;
+            display: inline-block;
+        }
+
+        .box_link div a {
+            font-weight: 800;
+            color: var(--link_name_color);
+        }
+
+        .box_link div span {
+            color: var(--link_description_color);
+        }
+    </style>
+    <script>
+        async function loadConfig() {
+            const response = await fetch("/config.json");
+            const cfg = await response.json();
+            const root = document.querySelector(":root");
+            // Set css variables   
+            root.style.setProperty("--width", cfg["width"]);
+            root.style.setProperty("--font", cfg["font"]);
+            root.style.setProperty("--background", cfg["background"]);
+            root.style.setProperty("--header_border", cfg["header_border"]);
+            root.style.setProperty("--header_color", cfg["header_color"]);
+            root.style.setProperty("--link_color", cfg["link_color"]);
+            root.style.setProperty("--link_border", cfg["link_border"]);
+            root.style.setProperty("--link_img_border", cfg["link_img_border"]);
+            root.style.setProperty("--link_name_color", cfg["link_name_color"]);
+            root.style.setProperty("--link_description_color", cfg["link_description_color"]);
+            //Render header
+            document.getElementById("header_name").innerText = cfg["header_name"];
+            document.getElementById("header_img").src = cfg["header_img"];
+            //Render links
+            for (var i = 0; i < cfg["links"].length; i++) {
+                let box_link = `
+                <div class="box_link">
+                    <img src="{ link_img }">
+                    <div>
+                        <a href="{ link_url }">{ link_name }</a>
+                        <span>{ link_description }</span>
+                    </div>
+                </div>`;
+                box_link = box_link.replaceAll("{ link_img }", new URL(cfg["links"][i]["url"]).origin + "/favicon.ico");
+                box_link = box_link.replaceAll("{ link_url }", cfg["links"][i]["url"]);
+                box_link = box_link.replaceAll("{ link_name }", cfg["links"][i]["name"]);
+                box_link = box_link.replaceAll("{ link_description }", cfg["links"][i]["description"]);
+                document.getElementById("links").insertAdjacentHTML("beforeend", box_link);
+            }
+
+            var link = document.createElement("link");
+            link.setAttribute("rel", "stylesheet");
+            link.setAttribute("type", "text/css");
+            link.setAttribute("href", cfg["font_url"]);
+            document.head.appendChild(link);
+        }
+        loadConfig();
+    </script>
+</head>
+
+<body>
+    <main>
+        <header>
+            <img id="header_img" src="" alt="profile picture">
+            <span id="header_name">Ching Chun</span>
+        </header>
+        <section id="links">
+        </section>
+        <footer></footer>
+    </main>
+</body>
+
+</html>
