@@ -117,7 +117,7 @@
     </style>
     <script>
         async function loadConfig() {
-            const response = await fetch("/config.json");
+            const response = await fetch("config.json");
             const cfg = await response.json();
             const root = document.querySelector(":root");
             // Set css variables   
