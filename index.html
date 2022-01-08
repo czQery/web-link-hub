@@ -11,15 +11,15 @@
             --width: "";
             --font: "";
             --background: "";
-            --header_border: "";
+            --header_img_border: "";
             --header_color: "";
-            --link_color: "";
+            --link_background: "";
+            --link_background_hover: "";
             --link_border: "";
             --link_img_border: "";
             --link_name_color: "";
             --link_description_color: "";
         }
-
 
         body {
             padding: 20px;
@@ -49,7 +49,7 @@
             object-fit: cover;
             width: 100px;
             height: 100px;
-            border-radius: var(--header_border);
+            border-radius: var(--header_img_border);
         }
 
         header span {
@@ -63,35 +63,55 @@
             row-gap: 20px;
         }
 
+        footer {
+            color: #a8a8a8;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        footer a:hover {
+            color: #ff4444;
+        }
+
         .box_link {
             display: flex;
             column-gap: 10px;
             border-radius: var(--link_border);
-            background-color: var(--link_color);
-            height: 30px;
+            background: var(--link_background);
+            height: auto;
             padding: 10px;
+            text-decoration: none;
+        }
+
+        .box_link:hover {
+            background: var(--link_background_hover);
         }
 
         .box_link img {
             object-fit: cover;
             width: 30px;
             height: 30px;
+            margin: auto 0 auto 0;
             border-radius: var(--link_img_border);
         }
 
-        .box_link div a,
-        span {
-            text-decoration: none;
+        .box_link div span {
             width: 100%;
             display: inline-block;
+            overflow-wrap: anywhere;
         }
 
-        .box_link div a {
+        .link_name {
             font-weight: 800;
             color: var(--link_name_color);
         }
 
-        .box_link div span {
+        .link_description {
             color: var(--link_description_color);
         }
     </style>
@@ -104,9 +124,10 @@
             root.style.setProperty("--width", cfg["width"]);
             root.style.setProperty("--font", cfg["font"]);
             root.style.setProperty("--background", cfg["background"]);
-            root.style.setProperty("--header_border", cfg["header_border"]);
+            root.style.setProperty("--header_img_border", cfg["header_img_border"]);
             root.style.setProperty("--header_color", cfg["header_color"]);
-            root.style.setProperty("--link_color", cfg["link_color"]);
+            root.style.setProperty("--link_background", cfg["link_background"]);
+            root.style.setProperty("--link_background_hover", cfg["link_background_hover"]);
             root.style.setProperty("--link_border", cfg["link_border"]);
             root.style.setProperty("--link_img_border", cfg["link_img_border"]);
             root.style.setProperty("--link_name_color", cfg["link_name_color"]);
@@ -117,24 +138,40 @@
             //Render links
             for (var i = 0; i < cfg["links"].length; i++) {
                 let box_link = `
-                <div class="box_link">
+                <a class="box_link" href="{ link_url }" { link_custom }>
                     <img src="{ link_img }">
                     <div>
-                        <a href="{ link_url }">{ link_name }</a>
-                        <span>{ link_description }</span>
+                        <span class="link_name">{ link_name }</span>
+                        <span class="link_description">{ link_description }</span>
                     </div>
-                </div>`;
+                </a>`;
                 box_link = box_link.replaceAll("{ link_img }", new URL(cfg["links"][i]["url"]).origin + "/favicon.ico");
                 box_link = box_link.replaceAll("{ link_url }", cfg["links"][i]["url"]);
                 box_link = box_link.replaceAll("{ link_name }", cfg["links"][i]["name"]);
                 box_link = box_link.replaceAll("{ link_description }", cfg["links"][i]["description"]);
+
+
+                var link_custom = `style="`;
+                if (cfg["links"][i]["background"] != null) {
+                    link_custom = link_custom + "background: " + cfg["links"][i]["background"] + ";";
+                }
+                box_link = box_link.replaceAll("{ link_custom }", link_custom+`"`);
                 document.getElementById("links").insertAdjacentHTML("beforeend", box_link);
             }
+            //Set title
+            document.title = cfg["header_name"]
 
+            //Set font
             var link = document.createElement("link");
             link.setAttribute("rel", "stylesheet");
             link.setAttribute("type", "text/css");
             link.setAttribute("href", cfg["font_url"]);
+            document.head.appendChild(link);
+
+            //Set favicon
+            var link = document.createElement("link");
+            link.setAttribute("rel", "icon");
+            link.setAttribute("href", cfg["header_img"]);
             document.head.appendChild(link);
         }
         loadConfig();
@@ -145,11 +182,14 @@
     <main>
         <header>
             <img id="header_img" src="" alt="profile picture">
-            <span id="header_name">Ching Chun</span>
+            <span id="header_name">Username</span>
         </header>
         <section id="links">
         </section>
-        <footer></footer>
+        <footer>
+            <!-- I'll be very happy if you leave it here 🥺👉👈 -->
+            Created by <a href="https://qery.cz/l/g_web-links-template">czQery</a> with ❤️
+        </footer>
     </main>
 </body>
 
